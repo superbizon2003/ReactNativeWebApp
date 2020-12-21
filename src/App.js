@@ -18,9 +18,11 @@ import {
 import {BrowserRouter as Router, Link, Route} from 'react-router-dom'
 import PrivateRoute from './best-practice/web/router/PrivateRoute'
 import Admin from './components/Admin'
-import Home from './components/Home'
+import ErrorBoundary from './best-practice/ErrorBoundary'
 
 import {AuthContext} from './context/auth'
+import ReceiptsPage from './pages/ReceiptsPage'
+import {DocumentsContext} from './context/documents'
 
 // import {
 //   Header,
@@ -31,20 +33,25 @@ import {AuthContext} from './context/auth'
 // } from 'react-native/Libraries/NewAppScreen';
 
 const App: () => React$Node = () => {
+  const logErrorToMyService = (error, errorInfo) => {
+    console.error('logErrorToMyService: ', error, errorInfo)
+  }
+
   return (
-    <>
+    <ErrorBoundary logErrorToMyService={logErrorToMyService}>
       <AuthContext.Provider value={false}>
-        <StatusBar barStyle="dark-content" />
-        <SafeAreaView>
-          <ScrollView
-            contentInsetAdjustmentBehavior="automatic"
-            style={styles.scrollView}>
-            {global.HermesInternal == null ? null : (
-              <View style={styles.engine}>
-                <Text style={styles.footer}>Engine: Hermes</Text>
-              </View>
-            )}
-            {/* <View style={styles.body}>
+        <DocumentsContext.Provider value={false}>
+          <StatusBar barStyle="dark-content" />
+          <SafeAreaView>
+            <ScrollView
+              contentInsetAdjustmentBehavior="automatic"
+              style={styles.scrollView}>
+              {global.HermesInternal == null ? null : (
+                <View style={styles.engine}>
+                  <Text style={styles.footer}>Engine: Hermes</Text>
+                </View>
+              )}
+              {/* <View style={styles.body}>
               <View style={styles.sectionContainer}>
                 <Text style={styles.sectionTitle}>Step One</Text>
                 <Text style={styles.sectionDescription}>
@@ -67,14 +74,15 @@ const App: () => React$Node = () => {
                 </Text>
               </View>
             </View> */}
-          </ScrollView>
-        </SafeAreaView>
-        <Router>
-          <Route exact path="/" component={Home} />
-          <PrivateRoute path="/admin" component={Admin} />
-        </Router>
+            </ScrollView>
+          </SafeAreaView>
+          <Router>
+            <Route exact path="/" component={ReceiptsPage} />
+            <PrivateRoute path="/admin" component={Admin} />
+          </Router>
+        </DocumentsContext.Provider>
       </AuthContext.Provider>
-    </>
+    </ErrorBoundary>
   )
 }
 
